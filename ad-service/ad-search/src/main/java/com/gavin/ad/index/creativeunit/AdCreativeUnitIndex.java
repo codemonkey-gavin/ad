@@ -1,13 +1,13 @@
 package com.gavin.ad.index.creativeunit;
 
 import com.gavin.ad.index.IndexAware;
+import com.gavin.ad.index.adunit.AdUnitObject;
 import com.gavin.ad.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Slf4j
@@ -19,6 +19,25 @@ public class AdCreativeUnitIndex implements IndexAware<String, AdCreativeUnitObj
     private static Map<Long, Set<Long>> creativeUnitMap;
     // <unitid,id set>
     private static Map<Long, Set<Long>> unitCreativeMap;
+
+    public List<Long> selectAds(List<AdUnitObject> unitObjects) {
+
+        if (CollectionUtils.isEmpty(unitObjects)) {
+            return Collections.emptyList();
+        }
+
+        List<Long> result = new ArrayList<>();
+
+        for (AdUnitObject unitObject : unitObjects) {
+
+            Set<Long> adIds = unitCreativeMap.get(unitObject.getUnitId());
+            if (CollectionUtils.isNotEmpty(adIds)) {
+                result.addAll(adIds);
+            }
+        }
+
+        return result;
+    }
 
     @Override
     public AdCreativeUnitObject get(String key) {

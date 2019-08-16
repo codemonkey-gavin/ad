@@ -6,6 +6,7 @@
         <module>ad-eureka</module>
         <module>ad-gateway</module>
         <module>ad-service</module>
+        <module>ad-kafka</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

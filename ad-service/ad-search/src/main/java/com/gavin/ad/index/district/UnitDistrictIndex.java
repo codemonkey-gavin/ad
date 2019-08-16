@@ -1,8 +1,10 @@
 package com.gavin.ad.index.district;
 
 import com.gavin.ad.index.IndexAware;
+import com.gavin.ad.search.vo.feature.DistrictFeature;
 import com.gavin.ad.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -22,6 +25,15 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
     static {
         districtUnitMap = new ConcurrentHashMap<>();
         unitDistrictMap = new ConcurrentHashMap<>();
+    }
+
+    public boolean match(Long adUnitId, List<DistrictFeature.ProviceAndCity> districts) {
+        if (districtUnitMap.containsKey(adUnitId) && CollectionUtils.isEmpty(unitDistrictMap.get(adUnitId))) {
+            Set<String> unitDistricts = unitDistrictMap.get(adUnitId);
+            List<String> targetDistricts = districts.stream().map(d -> CommonUtils.stringConcat(d.getProvice(), d.getCity())).collect(Collectors.toList());
+            return CollectionUtils.isSubCollection(targetDistricts, unitDistricts);
+        }
+        return false;
     }
 
     @Override
