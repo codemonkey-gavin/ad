@@ -25,16 +25,19 @@ public class MyProducer {
         properties.put("bootstrap.servers", "192.168.1.120:9092");
         properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put("partitioner.class", "com.gavin.ad.kafka.CustomPartitioner");
 
         producer = new KafkaProducer<String, String>(properties);
     }
 
+    // 只发送不关心结果
     private static void sendMessageForgetResult(String msg) {
         ProducerRecord<String, String> record = new ProducerRecord<String, String>("t_ad", "name", msg);
         producer.send(record);
         producer.close();
     }
 
+    // 发送同步获取结果
     private static void sendMessageSync(String msg) {
         ProducerRecord<String, String> record = new ProducerRecord<String, String>("t_ad", "name", msg);
         try {
@@ -50,6 +53,7 @@ public class MyProducer {
         }
     }
 
+    //发送异步回调结果
     private static void sendMessageCallBack(String msg) {
         ProducerRecord<String, String> record = new ProducerRecord<String, String>("t_ad", "name", msg);
         producer.send(record, new MyProducerCallBack());
